@@ -11,7 +11,6 @@ export class MuseumScene {
   constructor(canvasContainer, onSelectClassmate) {
     this.container = canvasContainer;
     this.onSelectClassmate = onSelectClassmate;
-    this.isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768 || window.matchMedia('(pointer: coarse)').matches;
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color('#12151d');
@@ -35,14 +34,14 @@ export class MuseumScene {
 
   initRenderer() {
     this.renderer = new THREE.WebGLRenderer({
-      antialias: !this.isMobile,
-      powerPreference: this.isMobile ? 'low-power' : 'high-performance'
+      antialias: true,
+      powerPreference: 'high-performance'
     });
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.isMobile ? 1 : 1.6));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = this.isMobile ? 1.15 : 1.25;
-    this.maxAnisotropy = this.isMobile ? 1 : this.renderer.capabilities.getMaxAnisotropy();
+    this.renderer.toneMappingExposure = 1.25;
+    this.maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
     this.container.appendChild(this.renderer.domElement);
   }
 
@@ -394,33 +393,32 @@ export class MuseumScene {
     plaque.position.set(0, -frameH / 2 - 0.32, 0.02);
     frameGroup.add(plaque);
 
-    // 6. Dedicated Spotlight - skip on mobile for performance
-    if (!this.isMobile) {
-      const spotTarget = new THREE.Object3D();
-      spotTarget.position.copy(position);
-      this.scene.add(spotTarget);
+    // 6. Dedicated Spotlight
+    const spotTarget = new THREE.Object3D();
+    spotTarget.position.copy(position);
+    this.scene.add(spotTarget);
 
-      const spotLight = new THREE.SpotLight(0xfff5e6, 2.2);
-      spotLight.angle = Math.PI / 5;
-      spotLight.penumbra = 0.5;
-      spotLight.decay = 1.2;
-      spotLight.distance = 9;
+    const spotLight = new THREE.SpotLight(0xfff5e6, 2.5);
+    spotLight.angle = Math.PI / 5;
+    spotLight.penumbra = 0.5;
+    spotLight.decay = 1.2;
+    spotLight.distance = 9;
 
-      const spotOffset = normal.clone().multiplyScalar(2.0);
-      spotLight.position.set(
-        position.x + spotOffset.x,
-        this.height - 0.3,
-        position.z + spotOffset.z
-      );
-      spotLight.target = spotTarget;
-      this.scene.add(spotLight);
+    const spotOffset = normal.clone().multiplyScalar(2.0);
+    spotLight.position.set(
+      position.x + spotOffset.x,
+      this.height - 0.3,
+      position.z + spotOffset.z
+    );
+    spotLight.target = spotTarget;
+    this.scene.add(spotLight);
 
-      const fixtureGeo = new THREE.CylinderGeometry(0.08, 0.12, 0.3, 10);
-      const fixtureMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8 });
-      const fixture = new THREE.Mesh(fixtureGeo, fixtureMat);
-      fixture.position.copy(spotLight.position);
-      this.scene.add(fixture);
-    }
+    // Track light fixture model on ceiling
+    const fixtureGeo = new THREE.CylinderGeometry(0.08, 0.12, 0.3, 10);
+    const fixtureMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8 });
+    const fixture = new THREE.Mesh(fixtureGeo, fixtureMat);
+    fixture.position.copy(spotLight.position);
+    this.scene.add(fixture);
 
     // 7. Interactive Hitbox for Raycasting
     const hitbox = new THREE.Mesh(
