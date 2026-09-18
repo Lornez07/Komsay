@@ -14,6 +14,7 @@ export class MuseumScene {
   constructor(canvasContainer, onSelectClassmate) {
     this.container = canvasContainer;
     this.onSelectClassmate = onSelectClassmate;
+    this.isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768 || window.matchMedia('(pointer: coarse)').matches;
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color('#070a14');
@@ -38,14 +39,14 @@ export class MuseumScene {
 
   initRenderer() {
     this.renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: 'high-performance'
+      antialias: !this.isMobile,
+      powerPreference: this.isMobile ? 'low-power' : 'high-performance'
     });
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.isMobile ? 1 : 1.6));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.25;
-    this.maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
+    this.renderer.toneMappingExposure = this.isMobile ? 1.15 : 1.25;
+    this.maxAnisotropy = this.isMobile ? 1 : this.renderer.capabilities.getMaxAnisotropy();
     this.container.appendChild(this.renderer.domElement);
   }
 
@@ -298,7 +299,7 @@ export class MuseumScene {
     // Tier 1 - main gold ring (large)
     const tier1Y = -1.25;
     const tier1Radius = 1.15;
-    const tier1TorusGeo = new THREE.TorusGeometry(tier1Radius, 0.022, 12, 48);
+    const tier1TorusGeo = new THREE.TorusGeometry(tier1Radius, 0.022, 8, this.isMobile ? 16 : 48);
     const tier1 = new THREE.Mesh(tier1TorusGeo, goldMat);
     tier1.rotation.x = Math.PI/2;
     tier1.position.y = tier1Y;
@@ -307,7 +308,7 @@ export class MuseumScene {
     // Tier 2 - inner cyan ring (smaller)
     const tier2Y = -1.65;
     const tier2Radius = 0.72;
-    const tier2TorusGeo = new THREE.TorusGeometry(tier2Radius, 0.015, 12, 36);
+    const tier2TorusGeo = new THREE.TorusGeometry(tier2Radius, 0.015, 8, this.isMobile ? 12 : 36);
     const tier2Mat = new THREE.MeshStandardMaterial({ color: 0x00d4ff, emissive: 0x00d4ff, emissiveIntensity: 0.9, metalness: 0.6 });
     const tier2 = new THREE.Mesh(tier2TorusGeo, tier2Mat);
     tier2.rotation.x = Math.PI/2;
@@ -326,8 +327,8 @@ export class MuseumScene {
       chandelier.add(spoke);
     }
 
-    // Hanging crystals - Tier1 (8 gold+cyan teardrops)
-    for (let i = 0; i < 8; i++) {
+    // Hanging crystals - Tier1 (4 on mobile, 8 on desktop)
+    for (let i = 0; i < (this.isMobile ? 4 : 8); i++) {
       const angle = (i / 8) * Math.PI * 2;
       const x = Math.cos(angle) * tier1Radius;
       const z = Math.sin(angle) * tier1Radius;
@@ -354,8 +355,8 @@ export class MuseumScene {
       chandelier.add(cryst);
     }
 
-    // Hanging crystals - Tier2 (6 smaller)
-    for (let i = 0; i < 6; i++) {
+    // Hanging crystals - Tier2 (3 on mobile, 6 on desktop)
+    for (let i = 0; i < (this.isMobile ? 3 : 6); i++) {
       const angle = (i / 6) * Math.PI * 2 + Math.PI/12;
       const x = Math.cos(angle) * tier2Radius;
       const z = Math.sin(angle) * tier2Radius;
@@ -392,13 +393,19 @@ export class MuseumScene {
     chandelier.add(centerGem);
     this.chandelierGem = centerGem;
 
-    // Central point light - warm + cyan mix for elegant glow
-    const chandLight = new THREE.PointLight(0xfff4cc, 1.4, 14, 1.8);
-    chandLight.position.set(0, -1.45, 0);
-    chandelier.add(chandLight);
-    const chandCyan = new THREE.PointLight(0x00d4ff, 0.75, 10, 2);
-    chandCyan.position.set(0, -1.65, 0);
-    chandelier.add(chandCyan);
+    // Central point light - single on mobile, two on desktop
+    if (!this.isMobile) {
+      const chandLight = new THREE.PointLight(0xfff4cc, 1.3, 12, 1.8);
+      chandLight.position.set(0, -1.45, 0);
+      chandelier.add(chandLight);
+      const chandCyan = new THREE.PointLight(0x00d4ff, 0.65, 9, 2);
+      chandCyan.position.set(0, -1.65, 0);
+      chandelier.add(chandCyan);
+    } else {
+      const chandLight = new THREE.PointLight(0xfff4cc, 0.7, 10, 2);
+      chandLight.position.set(0, -1.45, 0);
+      chandelier.add(chandLight);
+    }
 
     this.scene.add(chandelier);
     this.chandelier = chandelier;
@@ -431,19 +438,25 @@ export class MuseumScene {
     makeWallFill(0, 3.5, 0, this.width / 2, 0);
     makeWallFill(0, 3.5, 0, -this.width / 2, 0);
 
-    // 5. Elegant tech accent - cyan point lights near baseboard corners
-    const accentColor = 0x00d4ff;
-    const addAccent = (x, z) => {
-      const p = new THREE.PointLight(accentColor, 1.1, 7, 2);
-      p.position.set(x, 0.22, z);
-      this.scene.add(p);
-    };
-    const cx = this.width/2 - 1.2, cz = this.length/2 - 1.2;
-    addAccent(-cx, -cz); addAccent(cx, -cz); addAccent(-cx, cz); addAccent(cx, cz);
-    // Gold warm points under banner for elegance
-    const goldAccent = new THREE.PointLight(0xd4af37, 0.8, 6, 2);
-    goldAccent.position.set(0, 3.2, -this.length/2 + 1.2);
-    this.scene.add(goldAccent);
+    // 5. Elegant tech accent - cyan point lights (desktop only, skip on mobile)
+    if (!this.isMobile) {
+      const accentColor = 0x00d4ff;
+      const addAccent = (x, z) => {
+        const p = new THREE.PointLight(accentColor, 1.0, 6, 2);
+        p.position.set(x, 0.22, z);
+        this.scene.add(p);
+      };
+      const cx = this.width/2 - 1.2, cz = this.length/2 - 1.2;
+      addAccent(-cx, -cz); addAccent(cx, -cz); addAccent(-cx, cz); addAccent(cx, cz);
+      const goldAccent = new THREE.PointLight(0xd4af37, 0.7, 5, 2);
+      goldAccent.position.set(0, 3.2, -this.length/2 + 1.2);
+      this.scene.add(goldAccent);
+    } else {
+      // Mobile: single soft cyan center light only
+      const soft = new THREE.PointLight(0x00d4ff, 0.45, 12, 2);
+      soft.position.set(0, 2.5, 0);
+      this.scene.add(soft);
+    }
   }
 
   buildClassmateFrames() {
@@ -602,32 +615,33 @@ export class MuseumScene {
     plaque.position.set(0, -frameH / 2 - 0.32, 0.02);
     frameGroup.add(plaque);
 
-    // 6. Dedicated Spotlight
-    const spotTarget = new THREE.Object3D();
-    spotTarget.position.copy(position);
-    this.scene.add(spotTarget);
+    // 6. Dedicated Spotlight - skip on mobile for performance (23 lights -> 6)
+    if (!this.isMobile) {
+      const spotTarget = new THREE.Object3D();
+      spotTarget.position.copy(position);
+      this.scene.add(spotTarget);
 
-    const spotLight = new THREE.SpotLight(0xfff5e6, 2.5);
-    spotLight.angle = Math.PI / 5;
-    spotLight.penumbra = 0.5;
-    spotLight.decay = 1.2;
-    spotLight.distance = 9;
+      const spotLight = new THREE.SpotLight(0xfff5e6, 2.2);
+      spotLight.angle = Math.PI / 5;
+      spotLight.penumbra = 0.5;
+      spotLight.decay = 1.2;
+      spotLight.distance = 9;
 
-    const spotOffset = normal.clone().multiplyScalar(2.0);
-    spotLight.position.set(
-      position.x + spotOffset.x,
-      this.height - 0.3,
-      position.z + spotOffset.z
-    );
-    spotLight.target = spotTarget;
-    this.scene.add(spotLight);
+      const spotOffset = normal.clone().multiplyScalar(2.0);
+      spotLight.position.set(
+        position.x + spotOffset.x,
+        this.height - 0.3,
+        position.z + spotOffset.z
+      );
+      spotLight.target = spotTarget;
+      this.scene.add(spotLight);
 
-    // Track light fixture model on ceiling
-    const fixtureGeo = new THREE.CylinderGeometry(0.08, 0.12, 0.3, 10);
-    const fixtureMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8 });
-    const fixture = new THREE.Mesh(fixtureGeo, fixtureMat);
-    fixture.position.copy(spotLight.position);
-    this.scene.add(fixture);
+      const fixtureGeo = new THREE.CylinderGeometry(0.08, 0.12, 0.3, 10);
+      const fixtureMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8 });
+      const fixture = new THREE.Mesh(fixtureGeo, fixtureMat);
+      fixture.position.copy(spotLight.position);
+      this.scene.add(fixture);
+    }
 
     // 7. Interactive Hitbox for Raycasting
     const hitbox = new THREE.Mesh(
@@ -742,9 +756,11 @@ export class MuseumScene {
       pedGroup.add(holoGroup);
       this.scene.add(pedGroup);
 
-      const holoLight = new THREE.PointLight(0x00d4ff, 0.9, 4, 2);
-      holoLight.position.set(x, 1.85, z);
-      this.scene.add(holoLight);
+      if (!this.isMobile) {
+        const holoLight = new THREE.PointLight(0x00d4ff, 0.9, 4, 2);
+        holoLight.position.set(x, 1.85, z);
+        this.scene.add(holoLight);
+      }
 
       return holoGroup;
     };
@@ -782,9 +798,11 @@ export class MuseumScene {
       topRing.position.y = 2.32;
       pillarGroup.add(topRing);
 
-      const pillarLight = new THREE.PointLight(0x00d4ff, 0.55, 3.5, 2);
-      pillarLight.position.set(0, 2.35, 0);
-      pillarGroup.add(pillarLight);
+      if (!this.isMobile) {
+        const pillarLight = new THREE.PointLight(0x00d4ff, 0.55, 3.5, 2);
+        pillarLight.position.set(0, 2.35, 0);
+        pillarGroup.add(pillarLight);
+      }
 
       const capGeo = new THREE.BoxGeometry(0.24, 0.04, 0.24);
       const capMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.85, roughness: 0.25 });

@@ -27,6 +27,7 @@ class App {
     this.scene = new MuseumScene(this.canvasContainer, (classmate, pos, normal) => {
       this.handleSelectClassmate(classmate, pos, normal);
     });
+    this.isMobile = this.scene.isMobile;
 
     // 2. Initialize Camera Controls
     this.controls = new ControlsManager(
@@ -200,7 +201,13 @@ class App {
   animate() {
     requestAnimationFrame(() => this.animate());
 
-    const delta = this.clock.getDelta();
+    const delta = Math.min(this.clock.getDelta(), 0.05);
+    // Mobile: cap to 30fps to save battery/GPU
+    if (this.isMobile) {
+      this._frameAcc = (this._frameAcc || 0) + delta;
+      if (this._frameAcc < 1/30) return;
+      this._frameAcc = 0;
+    }
     this.controls.update(delta);
     this.scene.render();
   }
