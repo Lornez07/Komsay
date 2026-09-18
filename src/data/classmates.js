@@ -50,7 +50,7 @@ export const classmates = [
     nickname: "",
     role: "B.S. in Computer Science",
     degree: "B.S. in Computer Science",
-    quote: "",
+    quote: "Full-Stack Developer ❌\nFull-Stack Aldous ✅",
     memory: "",
     ambition: "",
     image: "/classmates/estrella.jpg",

@@ -662,6 +662,7 @@ input,
   font-style: italic;
   color: #f1f5f9;
   line-height: 1.5;
+  white-space: pre-line;
 }
 
 .modal-details-grid {
