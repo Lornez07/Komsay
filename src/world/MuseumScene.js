@@ -198,6 +198,9 @@ export class MuseumScene {
     ring.position.set(0, height - 0.04, 0);
     this.scene.add(ring);
 
+    // 5d. Elegant Chandelier - CS centerpiece (gold + cyan tech)
+    this.buildChandelier();
+
     // 6. Grand Graduation Wall Banner on North Wall
     this.buildHonorBanner();
   }
@@ -229,10 +232,10 @@ export class MuseumScene {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // Top subtitle - CS/IT tech
+    // Top subtitle - CS only
     ctx.fillStyle = '#00d4ff';
-    ctx.font = '600 26px "JetBrains Mono", "Consolas", monospace';
-    ctx.fillText('<  DEPARTMENT OF COMPUTER SCIENCE & INFORMATION TECHNOLOGY  />   •   CLASS OF 2026', 1024, 70);
+    ctx.font = '600 28px "JetBrains Mono", "Consolas", monospace';
+    ctx.fillText('<  DEPARTMENT OF COMPUTER SCIENCE  />   •   CLASS OF 2026', 1024, 70);
 
     // Main title
     ctx.fillStyle = '#ffffff';
@@ -257,6 +260,148 @@ export class MuseumScene {
     const bannerMesh = new THREE.Mesh(new THREE.PlaneGeometry(14.4, 1.6), bannerMat);
     bannerMesh.position.set(0, this.height - 0.95, -this.length / 2 + 0.08);
     this.scene.add(bannerMesh);
+  }
+
+  buildChandelier() {
+    const { height } = this;
+    const chandelier = new THREE.Group();
+    chandelier.position.set(0, height, 0);
+
+    // Ceiling mount - brushed gold disc
+    const mountGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.06, 24);
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.85, roughness: 0.25 });
+    const mount = new THREE.Mesh(mountGeo, goldMat);
+    mount.position.y = -0.02;
+    chandelier.add(mount);
+
+    // Cyan emissive ring on mount
+    const mountRingGeo = new THREE.RingGeometry(0.26, 0.30, 24);
+    const cyanMat = new THREE.MeshStandardMaterial({ color: 0x00d4ff, emissive: 0x00d4ff, emissiveIntensity: 1.0 });
+    const mountRing = new THREE.Mesh(mountRingGeo, cyanMat);
+    mountRing.rotation.x = -Math.PI/2;
+    mountRing.position.y = -0.055;
+    chandelier.add(mountRing);
+
+    // Central rod - dark aluminum + cyan core
+    const rodGeo = new THREE.CylinderGeometry(0.025, 0.025, 1.35, 12);
+    const rodMat = new THREE.MeshStandardMaterial({ color: 0x1a2332, metalness: 0.7, roughness: 0.3 });
+    const rod = new THREE.Mesh(rodGeo, rodMat);
+    rod.position.y = -0.75;
+    chandelier.add(rod);
+
+    const coreGeo = new THREE.CylinderGeometry(0.008, 0.008, 1.30, 8);
+    const coreMat = new THREE.MeshStandardMaterial({ color: 0x00d4ff, emissive: 0x00d4ff, emissiveIntensity: 1.5 });
+    const core = new THREE.Mesh(coreGeo, coreMat);
+    core.position.y = -0.75;
+    chandelier.add(core);
+
+    // Tier 1 - main gold ring (large)
+    const tier1Y = -1.25;
+    const tier1Radius = 1.15;
+    const tier1TorusGeo = new THREE.TorusGeometry(tier1Radius, 0.022, 12, 48);
+    const tier1 = new THREE.Mesh(tier1TorusGeo, goldMat);
+    tier1.rotation.x = Math.PI/2;
+    tier1.position.y = tier1Y;
+    chandelier.add(tier1);
+
+    // Tier 2 - inner cyan ring (smaller)
+    const tier2Y = -1.65;
+    const tier2Radius = 0.72;
+    const tier2TorusGeo = new THREE.TorusGeometry(tier2Radius, 0.015, 12, 36);
+    const tier2Mat = new THREE.MeshStandardMaterial({ color: 0x00d4ff, emissive: 0x00d4ff, emissiveIntensity: 0.9, metalness: 0.6 });
+    const tier2 = new THREE.Mesh(tier2TorusGeo, tier2Mat);
+    tier2.rotation.x = Math.PI/2;
+    tier2.position.y = tier2Y;
+    chandelier.add(tier2);
+
+    // Spokes from rod to tier1 (8 arms)
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const spokeLen = tier1Radius;
+      const spokeGeo = new THREE.CylinderGeometry(0.01, 0.01, spokeLen, 6);
+      const spoke = new THREE.Mesh(spokeGeo, goldMat);
+      spoke.position.set(Math.cos(angle) * spokeLen/2, tier1Y, Math.sin(angle) * spokeLen/2);
+      spoke.rotation.z = Math.PI/2;
+      spoke.rotation.y = -angle;
+      chandelier.add(spoke);
+    }
+
+    // Hanging crystals - Tier1 (8 gold+cyan teardrops)
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const x = Math.cos(angle) * tier1Radius;
+      const z = Math.sin(angle) * tier1Radius;
+      const h = 0.22 + Math.random()*0.08;
+      // gold cap
+      const capGeo = new THREE.CylinderGeometry(0.018, 0.012, 0.04, 8);
+      const cap = new THREE.Mesh(capGeo, goldMat);
+      cap.position.set(x, tier1Y - 0.02, z);
+      chandelier.add(cap);
+      // crystal - cone hanging
+      const crystGeo = new THREE.ConeGeometry(0.07, h, 6);
+      const crystMat = new THREE.MeshStandardMaterial({
+        color: 0xe0f7ff,
+        transparent: true,
+        opacity: 0.88,
+        roughness: 0.08,
+        metalness: 0.15,
+        emissive: 0x00d4ff,
+        emissiveIntensity: 0.18
+      });
+      const cryst = new THREE.Mesh(crystGeo, crystMat);
+      cryst.position.set(x, tier1Y - 0.06 - h/2, z);
+      cryst.rotation.x = Math.PI;
+      chandelier.add(cryst);
+    }
+
+    // Hanging crystals - Tier2 (6 smaller)
+    for (let i = 0; i < 6; i++) {
+      const angle = (i / 6) * Math.PI * 2 + Math.PI/12;
+      const x = Math.cos(angle) * tier2Radius;
+      const z = Math.sin(angle) * tier2Radius;
+      const h = 0.16;
+      const crystGeo = new THREE.ConeGeometry(0.05, h, 6);
+      const crystMat = new THREE.MeshStandardMaterial({
+        color: 0xfff8e0,
+        transparent: true,
+        opacity: 0.85,
+        roughness: 0.12,
+        metalness: 0.2,
+        emissive: 0xd4af37,
+        emissiveIntensity: 0.12
+      });
+      const cryst = new THREE.Mesh(crystGeo, crystMat);
+      cryst.position.set(x, tier2Y - 0.02 - h/2, z);
+      cryst.rotation.x = Math.PI;
+      chandelier.add(cryst);
+    }
+
+    // Central hanging gem (below tier2)
+    const centerGemGeo = new THREE.OctahedronGeometry(0.14, 0);
+    const centerGemMat = new THREE.MeshStandardMaterial({
+      color: 0x00d4ff,
+      emissive: 0x00d4ff,
+      emissiveIntensity: 1.6,
+      transparent: true,
+      opacity: 0.92,
+      metalness: 0.3,
+      roughness: 0.1
+    });
+    const centerGem = new THREE.Mesh(centerGemGeo, centerGemMat);
+    centerGem.position.y = tier2Y - 0.38;
+    chandelier.add(centerGem);
+    this.chandelierGem = centerGem;
+
+    // Central point light - warm + cyan mix for elegant glow
+    const chandLight = new THREE.PointLight(0xfff4cc, 1.4, 14, 1.8);
+    chandLight.position.set(0, -1.45, 0);
+    chandelier.add(chandLight);
+    const chandCyan = new THREE.PointLight(0x00d4ff, 0.75, 10, 2);
+    chandCyan.position.set(0, -1.65, 0);
+    chandelier.add(chandCyan);
+
+    this.scene.add(chandelier);
+    this.chandelier = chandelier;
   }
 
   buildLighting() {
@@ -723,6 +868,7 @@ export class MuseumScene {
   render() {
     if (this.sculpture1) this.sculpture1.rotation.y += 0.005;
     if (this.sculpture2) this.sculpture2.rotation.y -= 0.005;
+    if (this.chandelierGem) { this.chandelierGem.rotation.y += 0.012; this.chandelierGem.rotation.x += 0.005; }
 
     this.renderer.render(this.scene, this.camera);
   }
