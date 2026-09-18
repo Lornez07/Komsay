@@ -136,8 +136,8 @@ class App {
     const audioIcon = document.getElementById('audio-icon');
     const audioText = document.getElementById('audio-text');
 
-    audioBtn.addEventListener('click', () => {
-      const isPlaying = this.audio.toggle();
+    audioBtn.addEventListener('click', async () => {
+      const isPlaying = await this.audio.toggle();
       audioIcon.textContent = isPlaying ? '🔊' : '🔇';
       audioText.textContent = isPlaying ? 'Mute' : 'Ambience';
       audioBtn.style.borderColor = isPlaying ? 'var(--gold)' : '';
