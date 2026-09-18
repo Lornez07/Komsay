@@ -776,6 +776,17 @@ input,
   color: var(--gold);
   margin-bottom: 12px;
   text-shadow: 0 0 20px var(--gold-glow);
+  text-align: center;
+  width: 100%;
+  padding-left: 4px;
+  box-sizing: border-box;
+}
+
+.loading-screen p {
+  text-align: center;
+  width: 100%;
+  padding-left: 1px;
+  box-sizing: border-box;
 }
 
 .loading-bar-wrapper {
