@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Classmates 3D Interactive Gallery | Memorial Hall</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <!-- 3D Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Center Aim Reticle -->
+    <div class="reticle" id="reticle"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+      <div class="loading-logo">MEMORIAL GALLERY</div>
+      <p style="color: #94a3b8; font-size: 0.88rem; letter-spacing: 1px;">Curating 3D Exhibition of Classmates...</p>
+      <div class="loading-bar-wrapper">
+        <div class="loading-bar-progress"></div>
+      </div>
+    </div>
+
+    <!-- HUD Overlay -->
+    <div class="hud-overlay" id="hud">
+      <!-- Top Bar -->
+      <header class="hud-header">
+        <div class="gallery-branding">
+          <h1 class="gallery-title">CS CLASS OF 2026</h1>
+          <p class="gallery-subtitle">🎓 Computer Science Graduation Hall of Honors</p>
+        </div>
+
+        <div class="hud-top-actions">
+          <button class="hud-btn" id="btn-audio" title="Toggle Ambient Gallery Sound">
+            <span id="audio-icon">🔇</span>
+            <span id="audio-text">Ambience</span>
+          </button>
+          <button class="hud-btn" id="btn-map" title="Toggle 2D Museum Map">
+            <span>🗺️</span>
+            <span>Map</span>
+          </button>
+          <button class="hud-btn" id="btn-tour" title="Start Guided Automatic Tour">
+            <span>🏛️</span>
+            <span>Virtual Tour</span>
+          </button>
+          <button class="hud-btn" id="btn-reset" title="Return to Center Stance">
+            <span>🔄</span>
+            <span>Center View</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Bottom Bar -->
+      <footer class="hud-footer">
+        <div class="control-tips">
+          <span><span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span> Walk</span>
+          <span class="tip-separator">•</span>
+          <span>Click & Drag to Look Around</span>
+          <span class="tip-separator">•</span>
+          <span>Click any portrait frame to inspect</span>
+        </div>
+
+        <div class="hud-right-controls" id="hud-right">
+          <!-- Minimap and Directory Drawer injected here -->
+        </div>
+      </footer>
+    </div>
+
+    <!-- Modals and dynamic UI injected by JS -->
+    <div id="ui-container"></div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
