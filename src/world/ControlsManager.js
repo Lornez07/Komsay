@@ -295,11 +295,11 @@ export class ControlsManager {
     this.camera.position.x = Math.max(this.bounds.minX, Math.min(this.bounds.maxX, this.camera.position.x));
     this.camera.position.z = Math.max(this.bounds.minZ, Math.min(this.bounds.maxZ, this.camera.position.z));
 
-    // Subtle head bobbing when moving
+    // Subtle head bobbing when moving - reduced to avoid shimmer on thin borders
     const isMoving = moveMagnitude > 0.1;
     if (isMoving) {
-      this.bobTimer += delta * 10;
-      this.camera.position.y = this.eyeHeight + Math.sin(this.bobTimer) * 0.04;
+      this.bobTimer += delta * 8;
+      this.camera.position.y = this.eyeHeight + Math.sin(this.bobTimer) * 0.015;
     } else {
       this.camera.position.y = THREE.MathUtils.lerp(this.camera.position.y, this.eyeHeight, 0.1);
     }

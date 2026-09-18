@@ -41,6 +41,7 @@ export class MuseumScene {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.25;
+    this.maxAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
     this.container.appendChild(this.renderer.domElement);
   }
 
@@ -56,10 +57,17 @@ export class MuseumScene {
     const { width, length, height } = this;
 
     // 1. Flooring
+    const floorTex = createWoodFloorTexture();
+    const bumpTex = createWoodBumpTexture();
+    // Reduce shimmer on high-frequency parquet at distance
+    floorTex.anisotropy = this.maxAnisotropy;
+    bumpTex.anisotropy = this.maxAnisotropy;
+    floorTex.minFilter = THREE.LinearMipmapLinearFilter;
+    bumpTex.minFilter = THREE.LinearMipmapLinearFilter;
     const floorGeo = new THREE.PlaneGeometry(width, length);
     const floorMat = new THREE.MeshStandardMaterial({
-      map: createWoodFloorTexture(),
-      bumpMap: createWoodBumpTexture(),
+      map: floorTex,
+      bumpMap: bumpTex,
       bumpScale: 0.05,
       roughness: 0.35,
       metalness: 0.05,
@@ -303,24 +311,30 @@ export class MuseumScene {
     );
     frameGroup.add(frameOuter);
 
-    // 2. White Gallery Passe-partout Matting
+    // 2. White Gallery Passe-partout Matting - use Plane to avoid thin-box edge aliasing
     const mattingMat = new THREE.MeshStandardMaterial({
       color: 0xfbfbfb,
-      roughness: 0.95
+      roughness: 0.95,
+      polygonOffset: true,
+      polygonOffsetFactor: 1,
+      polygonOffsetUnits: 1
     });
     const matting = new THREE.Mesh(
-      new THREE.BoxGeometry(frameW, frameH, 0.02),
+      new THREE.PlaneGeometry(frameW, frameH),
       mattingMat
     );
-    matting.position.z = depth / 2 - 0.01;
+    matting.position.z = depth / 2 + 0.001;
     frameGroup.add(matting);
 
     // 3. Classmate Portrait Mesh
     const photoW = frameW - 0.22;
     const photoH = frameH - 0.22;
 
+    const avatarTex = createAvatarTexture(classmate.name, classmate.color);
+    avatarTex.anisotropy = this.maxAnisotropy;
+    avatarTex.minFilter = THREE.LinearMipmapLinearFilter;
     const fallbackMat = new THREE.MeshBasicMaterial({
-      map: createAvatarTexture(classmate.name, classmate.color)
+      map: avatarTex
     });
     const portraitMat = fallbackMat;
 
@@ -329,6 +343,9 @@ export class MuseumScene {
         classmate.image,
         (loadedTex) => {
           loadedTex.colorSpace = THREE.SRGBColorSpace;
+          loadedTex.anisotropy = this.maxAnisotropy;
+          loadedTex.minFilter = THREE.LinearMipmapLinearFilter;
+          loadedTex.generateMipmaps = true;
           portraitMat.map = loadedTex;
           portraitMat.needsUpdate = true;
         },
@@ -343,25 +360,29 @@ export class MuseumScene {
       new THREE.PlaneGeometry(photoW, photoH),
       portraitMat
     );
-    portraitMesh.position.z = depth / 2 + 0.01;
+    portraitMesh.position.z = depth / 2 + 0.02;
     frameGroup.add(portraitMesh);
 
     // 4. Subtle Glass Reflection Plane
     const glassMat = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       transparent: true,
-      opacity: 0.08
+      opacity: 0.08,
+      depthWrite: false
     });
     const glass = new THREE.Mesh(
       new THREE.PlaneGeometry(photoW, photoH),
       glassMat
     );
-    glass.position.z = depth / 2 + 0.015;
+    glass.position.z = depth / 2 + 0.021;
     frameGroup.add(glass);
 
     // 5. Engraved Brass Nameplate
+    const brassTex = createBrassTexture(classmate.name, classmate.role);
+    brassTex.anisotropy = this.maxAnisotropy;
+    brassTex.minFilter = THREE.LinearMipmapLinearFilter;
     const plaqueMat = new THREE.MeshStandardMaterial({
-      map: createBrassTexture(classmate.name, classmate.role),
+      map: brassTex,
       metalness: 0.85,
       roughness: 0.25
     });
