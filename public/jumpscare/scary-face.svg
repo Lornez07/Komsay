@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
+  <!-- Scary pale face base -->
+  <rect width="400" height="500" fill="#0a0a0a"/>
+  <!-- Head shape -->
+  <ellipse cx="200" cy="250" rx="135" ry="165" fill="#d8cdc0" stroke="#1a1a1a" stroke-width="3"/>
+  <!-- Dark eye sockets -->
+  <ellipse cx="155" cy="200" rx="42" ry="38" fill="#000"/>
+  <ellipse cx="245" cy="200" rx="42" ry="38" fill="#000"/>
+  <!-- Glowing red eyes -->
+  <ellipse cx="155" cy="205" rx="16" ry="12" fill="#ff0a1a" opacity="0.95">
+    <animate attributeName="opacity" values="0.95;0.3;0.95" dur="0.12s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="245" cy="205" rx="16" ry="12" fill="#ff0a1a" opacity="0.95">
+    <animate attributeName="opacity" values="0.95;0.3;0.95" dur="0.12s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="155" cy="205" rx="6" ry="6" fill="#000"/>
+  <ellipse cx="245" cy="205" rx="6" ry="6" fill="#000"/>
+  <!-- Nose shadow -->
+  <path d="M 200 220 L 186 265 L 214 265 Z" fill="#1a1a1a" opacity="0.9"/>
+  <!-- Creepy wide mouth -->
+  <ellipse cx="200" cy="315" rx="58" ry="42" fill="#000"/>
+  <ellipse cx="200" cy="318" rx="48" ry="28" fill="#0f0f0f"/>
+  <!-- Sharp teeth -->
+  <path d="M 162 298 L 170 328 L 178 298 Z" fill="#e8e0d0"/>
+  <path d="M 180 295 L 188 330 L 196 295 Z" fill="#e8e0d0"/>
+  <path d="M 198 293 L 206 332 L 214 293 Z" fill="#e8e0d0"/>
+  <path d="M 216 295 L 224 330 L 232 295 Z" fill="#e8e0d0"/>
+  <path d="M 162 330 L 170 348 L 178 330 Z" fill="#e8e0d0"/>
+  <path d="M 180 332 L 188 350 L 196 332 Z" fill="#e8e0d0"/>
+  <path d="M 198 334 L 206 352 L 214 334 Z" fill="#e8e0d0"/>
+  <path d="M 216 332 L 224 350 L 232 332 Z" fill="#e8e0d0"/>
+  <!-- Blood drips -->
+  <path d="M 168 352 Q 170 380 168 395 Q 166 380 168 352" fill="#b8000f"/>
+  <path d="M 200 352 Q 202 390 200 410 Q 198 390 200 352" fill="#b8000f"/>
+  <path d="M 228 352 Q 230 375 228 390 Q 226 375 228 352" fill="#b8000f"/>
+  <!-- Cracks / veins -->
+  <path d="M 120 140 Q 140 180 125 220" stroke="#4a0000" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <path d="M 280 135 Q 260 175 275 215" stroke="#4a0000" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <path d="M 200 80 Q 200 120 200 150" stroke="#2a0000" stroke-width="2" fill="none" opacity="0.5"/>
+</svg>

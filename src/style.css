@@ -974,3 +974,172 @@ input,
     font-size: 0.78rem;
   }
 }
+
+/* Jumpscare Easter Egg for cs-4 - TRUE HORROR */
+.jumpscare-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 350;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s ease;
+  overflow: hidden;
+}
+
+.jumpscare-overlay.hidden {
+  display: none;
+  opacity: 0;
+}
+
+.jumpscare-overlay.active {
+  display: flex;
+  opacity: 1;
+  pointer-events: auto;
+  animation: jumpscareFlash 0.95s ease-out;
+}
+
+.jumpscare-bg {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  z-index: 1;
+}
+
+.jumpscare-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.jumpscare-base {
+  z-index: 2;
+  transform: scale(1.2);
+  filter: grayscale(0.85) contrast(2.2) brightness(0.55) sepia(0.4) hue-rotate(-15deg) saturate(1.8);
+  animation: jumpscareBaseZoom 0.95s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.9;
+}
+
+.jumpscare-scary-face {
+  z-index: 3;
+  transform: scale(1.35);
+  filter: contrast(1.4) brightness(1.05) drop-shadow(0 0 30px rgba(255,0,20,0.9));
+  animation: jumpscareScaryZoom 0.95s cubic-bezier(0.16, 1, 0.3, 1);
+  mix-blend-mode: screen;
+  opacity: 0.98;
+}
+
+.jumpscare-glitch {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,0,30,0.12) 3px, transparent 4px);
+  opacity: 0;
+  animation: glitchFlicker 0.95s steps(8) forwards;
+  pointer-events: none;
+}
+
+.jumpscare-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: radial-gradient(ellipse at center, transparent 28%, rgba(0,0,0,0.92) 78%),
+              linear-gradient(0deg, rgba(120,0,10,0.35), transparent 35%, transparent 62%, rgba(120,0,10,0.4));
+  pointer-events: none;
+}
+
+.jumpscare-blood-border {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  border: 14px solid transparent;
+  border-image: linear-gradient(#6b0008, #ff0a1a, #6b0008) 1;
+  opacity: 0.85;
+  box-shadow: inset 0 0 60px rgba(180,0,10,0.6), 0 0 40px rgba(255,0,20,0.5);
+  pointer-events: none;
+}
+
+.jumpscare-text {
+  position: absolute;
+  bottom: 7%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 7;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2.2rem, 8vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,0,30,1), 0 0 30px rgba(255,0,30,0.9), 0 0 60px rgba(255,0,30,0.6), 0 4px 20px #000;
+  animation: jumpscareTextPop 0.45s 0.12s both cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(0,0,0,0.55);
+  padding: 6px 22px;
+  border: 2px solid #ff0a1a;
+}
+
+@keyframes jumpscareBaseZoom {
+  0% { transform: scale(0.9) rotate(0deg); filter: grayscale(0) contrast(1) brightness(1); }
+  10% { transform: scale(1.45) rotate(-1.8deg); }
+  22% { transform: scale(1.32) rotate(1.5deg); }
+  38% { transform: scale(1.58) rotate(-1deg); }
+  55% { transform: scale(1.48) rotate(0.9deg); }
+  100% { transform: scale(1.52) rotate(0deg); }
+}
+
+@keyframes jumpscareScaryZoom {
+  0% { transform: scale(0.5) rotate(0deg); opacity: 0; }
+  18% { transform: scale(1.55) rotate(-1deg); opacity: 1; }
+  30% { transform: scale(1.38) rotate(1.2deg); }
+  48% { transform: scale(1.62) rotate(-0.8deg); }
+  100% { transform: scale(1.58) rotate(0deg); }
+}
+
+@keyframes glitchFlicker {
+  0%, 100% { opacity: 0; transform: translateX(0); }
+  12% { opacity: 0.9; transform: translateX(-4px); }
+  13% { opacity: 0; transform: translateX(0); }
+  22% { opacity: 0.7; transform: translateX(5px); }
+  24% { opacity: 0; }
+  36% { opacity: 0.85; transform: translateX(-3px); }
+  38% { opacity: 0; }
+  58% { opacity: 0.6; transform: translateX(3px); }
+  60% { opacity: 0; }
+}
+
+@keyframes jumpscareFlash {
+  0% { background: #000; }
+  6% { background: #fff; }
+  11% { background: #000; }
+  17% { background: #ff0a1a; }
+  22% { background: #000; }
+  27% { background: #fff; }
+  30% { background: #000; }
+  44% { background: #1a0002; }
+  100% { background: #000; }
+}
+
+@keyframes jumpscareTextPop {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.2) translateY(40px) rotate(-2deg); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1) translateY(0) rotate(0deg); }
+}
+
+.jumpscare-shake {
+  animation: bodyShake 0.55s ease-in-out;
+}
+
+@keyframes bodyShake {
+  0%, 100% { transform: translate(0,0); }
+  8% { transform: translate(-10px, 6px) rotate(-0.8deg); }
+  16% { transform: translate(10px, -5px) rotate(0.8deg); }
+  24% { transform: translate(-8px, -7px) rotate(-0.6deg); }
+  32% { transform: translate(8px, 8px) rotate(0.6deg); }
+  40% { transform: translate(-6px, 4px); }
+  52% { transform: translate(6px, -6px); }
+  68% { transform: translate(-4px, 5px); }
+  84% { transform: translate(2px, -2px); }
+}

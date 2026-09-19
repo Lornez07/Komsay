@@ -7,6 +7,7 @@ import { Minimap } from './ui/Minimap.js';
 import { MuseumAudio } from './ui/Audio.js';
 import { VirtualJoystick } from './ui/Joystick.js';
 import { classmates } from './data/classmates.js';
+import { Jumpscare } from './ui/Jumpscare.js';
 
 class App {
   constructor() {
@@ -75,7 +76,10 @@ class App {
       this.controls.setJoystickInput(vec);
     });
 
-    // 8. HUD Buttons
+    // 8. Jumpscare Easter Egg for cs-4 (every frame click, during zoom)
+    this.jumpscare = new Jumpscare();
+
+    // 9. HUD Buttons
     this.setupHudButtons();
 
     // 8. Handle Window Resize
@@ -104,6 +108,13 @@ class App {
     const idx = classmates.findIndex(c => c.id === classmate.id);
     if (idx !== -1) {
       this.currentClassmateIndex = idx;
+    }
+
+    // Jumpscare for cs-4 every time his frame is clicked, synced with zoom start
+    const isJumpscareTarget = classmate.id === 'cs-4';
+    if (isJumpscareTarget && this.jumpscare) {
+      // Trigger immediately as zoom begins (before focusOnFrame animation)
+      this.jumpscare.trigger();
     }
 
     this.controls.focusOnFrame(pos, normal, () => {
