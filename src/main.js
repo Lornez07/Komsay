@@ -110,14 +110,19 @@ class App {
       this.currentClassmateIndex = idx;
     }
 
-    // Jumpscare only on direct frame click, not on Virtual Tour / Directory
     const isJumpscareTarget = classmate.id === 'cs-4';
-    if (isDirectFrameClick && isJumpscareTarget && this.jumpscare) {
-      this.jumpscare.trigger();
-    }
 
+    // Zoom first, then jumpscare (only on direct frame click)
     this.controls.focusOnFrame(pos, normal, () => {
-      this.modal.show(classmate, this.currentClassmateIndex, classmates.length);
+      if (isDirectFrameClick && isJumpscareTarget && this.jumpscare) {
+        this.jumpscare.trigger();
+        // Show modal after jumpscare finishes (2.5s) so scare is full-screen
+        setTimeout(() => {
+          this.modal.show(classmate, this.currentClassmateIndex, classmates.length);
+        }, this.jumpscare.DURATION + 120);
+      } else {
+        this.modal.show(classmate, this.currentClassmateIndex, classmates.length);
+      }
     });
   }
 
