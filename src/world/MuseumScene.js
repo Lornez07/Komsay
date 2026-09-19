@@ -163,6 +163,11 @@ export class MuseumScene {
 
     // 6. Grand Graduation Wall Banner on North Wall
     this.buildHonorBanner();
+
+    // 7. Elegant Architecture: Crown Molding + South Grand Arch + Classical Columns
+    this.buildCrownMolding();
+    this.buildSouthGrandArch();
+    this.buildClassicalColumns();
   }
 
   buildHonorBanner() {
@@ -199,13 +204,112 @@ export class MuseumScene {
     // Subtext
     ctx.fillStyle = '#94a3b8';
     ctx.font = 'italic 28px "Inter", sans-serif';
-    ctx.fillText('10 Visionary Computer Science Graduates • Forever Batch of 2026', 1024, 215);
+    ctx.fillText('11 Visionary Computer Science Graduates • Forever Batch of 2026', 1024, 215);
 
     const texture = new THREE.CanvasTexture(canvas);
     const bannerMat = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
     const bannerMesh = new THREE.Mesh(new THREE.PlaneGeometry(14.4, 1.6), bannerMat);
     bannerMesh.position.set(0, this.height - 0.95, -this.length / 2 + 0.08);
     this.scene.add(bannerMesh);
+  }
+
+  buildCrownMolding() {
+    const { width, length, height } = this;
+    const moldingY = height - 0.18;
+    const moldingH = 0.22;
+    const moldingD = 0.14;
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.85, roughness: 0.28 });
+    const darkMat = new THREE.MeshStandardMaterial({ color: 0x1a140e, roughness: 0.7 });
+
+    // Thin gold cap
+    const addMolding = (w, h, d, x, y, z) => {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), goldMat);
+      mesh.position.set(x, y, z);
+      this.scene.add(mesh);
+      const under = new THREE.Mesh(new THREE.BoxGeometry(w, h*0.55, d*0.9), darkMat);
+      under.position.set(x, y - h*0.62, z);
+      this.scene.add(under);
+    };
+    addMolding(width, moldingH, moldingD, 0, moldingY, -length/2 + moldingD/2);
+    addMolding(width, moldingH, moldingD, 0, moldingY, length/2 - moldingD/2);
+    addMolding(moldingD, moldingH, length, -width/2 + moldingD/2, moldingY, 0);
+    addMolding(moldingD, moldingH, length, width/2 - moldingD/2, moldingY, 0);
+  }
+
+  buildSouthGrandArch() {
+    // Now as twin classical columns flanking the group (no lintel) - as requested
+    const { length, height } = this;
+    const span = 11.4; // distance between columns, wider than group 9.5
+    const z = length/2 - 0.24;
+    const colH = height - 0.55;
+    const colR = 0.32;
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.84, roughness: 0.26 });
+    const stoneMat = new THREE.MeshStandardMaterial({ color: 0xe8ddd0, roughness: 0.82 });
+    const baseMat = new THREE.MeshStandardMaterial({ color: 0x1a140e, roughness: 0.6 });
+
+    const makeSouthColumn = (x) => {
+      const grp = new THREE.Group();
+      grp.position.set(x, 0, z);
+      const base = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.32, 0.78), baseMat);
+      base.position.y = 0.16;
+      grp.add(base);
+      const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.14, 0.66), goldMat);
+      plinth.position.y = 0.39;
+      grp.add(plinth);
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(colR, colR*0.92, colH, 16), stoneMat);
+      shaft.position.y = colH/2 + 0.46;
+      grp.add(shaft);
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(colR*1.28, colR*1.08, 0.30, 16), goldMat);
+      cap.position.y = colH + 0.46 + 0.15;
+      grp.add(cap);
+      const abacus = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.15, 0.78), goldMat);
+      abacus.position.y = colH + 0.46 + 0.37;
+      grp.add(abacus);
+      this.scene.add(grp);
+    };
+    makeSouthColumn(-span/2);
+    makeSouthColumn(span/2);
+  }
+
+  buildClassicalColumns() {
+    const { width, length, height } = this;
+    const colH = height - 0.55;
+    const colR = 0.26;
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.88, roughness: 0.22 });
+    const stoneMat = new THREE.MeshStandardMaterial({ color: 0xf0ebe1, roughness: 0.72 });
+    const baseMat = new THREE.MeshStandardMaterial({ color: 0x1a140e, roughness: 0.6 });
+
+    const makeColumn = (x, z) => {
+      const grp = new THREE.Group();
+      grp.position.set(x, 0, z);
+      // Base
+      const base = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.32, 0.72), baseMat);
+      base.position.y = 0.16;
+      grp.add(base);
+      const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.12, 0.62), goldMat);
+      plinth.position.y = 0.38;
+      grp.add(plinth);
+      // Shaft
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(colR, colR*0.92, colH, 16), stoneMat);
+      shaft.position.y = colH/2 + 0.44;
+      grp.add(shaft);
+      // Fluting hint via subtle scale
+      // Capital
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(colR*1.25, colR*1.08, 0.28, 16), goldMat);
+      cap.position.y = colH + 0.44 + 0.14;
+      grp.add(cap);
+      const abacus = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.14, 0.72), goldMat);
+      abacus.position.y = colH + 0.44 + 0.35;
+      grp.add(abacus);
+      this.scene.add(grp);
+    };
+
+    const inset = 1.15;
+    // 4 corners only (removed 2 mid-north pilasters as requested)
+    makeColumn(-width/2 + inset, -length/2 + inset);
+    makeColumn(width/2 - inset, -length/2 + inset);
+    makeColumn(-width/2 + inset, length/2 - inset);
+    makeColumn(width/2 - inset, length/2 - inset);
   }
 
   buildLighting() {
@@ -282,13 +386,22 @@ export class MuseumScene {
           normal.set(0, 0, -1);
         }
 
-        this.createFrameObject(classmate, pos, rotY, normal, frameW, frameH);
+        // South group is now solo - make it panoramic bigger/longer, move higher
+        const isGroup = classmate.isGroup;
+        const w = isGroup ? 9.5 : frameW;
+        const h = isGroup ? 4.2 : frameH;
+        if (wallType === 'south' && isGroup) {
+          pos.y = eyeLevel + 0.75; // raise so bottom not hitting floor (was 2.4, now 3.15)
+        }
+
+        this.createFrameObject(classmate, pos, rotY, normal, w, h);
       });
     };
 
     layoutWall(wallGroups.north, width, 'north');
     layoutWall(wallGroups.east, length, 'east');
     layoutWall(wallGroups.west, length, 'west');
+    layoutWall(wallGroups.south, width, 'south');
   }
 
   createFrameObject(classmate, position, rotY, normal, frameW, frameH) {

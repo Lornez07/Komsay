@@ -1,6 +1,6 @@
 /**
  * Classmates Data Configuration
- * 10 Computer Science Graduates — sorted alphabetically by surname
+ * 11 Computer Science Graduates + Group Photo — south wall center
  */
 
 export const classmates = [
@@ -99,7 +99,7 @@ export const classmates = [
     color: "#06b6d4"
   },
 
-  // --- WEST WALL ---
+  // --- WEST WALL (now 4 with Lagsa - alphabetical) ---
   {
     id: "cs-8",
     name: "Elijah S. Gracio",
@@ -112,6 +112,19 @@ export const classmates = [
     image: "/classmates/gracio.jpg",
     wall: "west",
     color: "#f43f5e"
+  },
+  {
+    id: "cs-11",
+    name: "John Lorence Lagsa",
+    nickname: "",
+    role: "B.S. in Computer Science",
+    degree: "B.S. in Computer Science",
+    quote: "Coming soon...",
+    memory: "",
+    ambition: "",
+    image: "/classmates/lagsa.jpg",
+    wall: "west",
+    color: "#f97316"
   },
   {
     id: "cs-9",
@@ -138,12 +151,28 @@ export const classmates = [
     image: "/classmates/pascual.jpg",
     wall: "west",
     color: "#eab308"
+  },
+
+  // --- SOUTH WALL (Group ONLY - large panoramic) ---
+  {
+    id: "group-2026",
+    name: "CS Class of 2026",
+    nickname: "",
+    role: "Class Group",
+    degree: "B.S. in Computer Science",
+    quote: "11 Graduates, One Journey 🎓",
+    memory: "4 years of puyat, ML, basketball, and prompting together.",
+    ambition: "Together from Hello World to Hello Future",
+    image: "/classmates/group.jpg",
+    wall: "south",
+    color: "#d4af37",
+    isGroup: true
   }
 ];
 
 export const museumConfig = {
   galleryName: "CS Class of 2026",
-  subTitle: "10 Computer Science Graduates • Virtual Memorial Gallery",
+  subTitle: "11 Computer Science Graduates • Graduation Gallery",
   roomDimensions: {
     width: 26,
     length: 32,

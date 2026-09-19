@@ -1,4 +1,4 @@
-# 🏛️ Interactive 3D Classmates Gallery & Memorial Hall
+# 🏛️ Interactive 3D Classmates Gallery & Graduation Hall
 
 An immersive, interactive 3D virtual museum exhibition featuring your classmates with their pictures, roles, memorable quotes, ambitions, and memories.
 

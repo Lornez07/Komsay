@@ -24,6 +24,7 @@ class App {
   }
 
   init() {
+    window._komsayApp = this;
     // 1. Initialize 3D Scene - only direct frame clicks trigger jumpscare
     this.scene = new MuseumScene(this.canvasContainer, (classmate, pos, normal) => {
       this.handleSelectClassmate(classmate, pos, normal, true);
