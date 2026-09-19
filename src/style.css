@@ -999,7 +999,7 @@ input,
   display: flex;
   opacity: 1;
   pointer-events: auto;
-  animation: jumpscareFlash 0.95s ease-out;
+  animation: jumpscareFlash 2.5s ease-out;
 }
 
 .jumpscare-bg {
@@ -1021,7 +1021,7 @@ input,
   z-index: 2;
   transform: scale(1.2);
   filter: grayscale(0.85) contrast(2.2) brightness(0.55) sepia(0.4) hue-rotate(-15deg) saturate(1.8);
-  animation: jumpscareBaseZoom 0.95s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: jumpscareBaseZoom 2.5s cubic-bezier(0.16, 1, 0.3, 1);
   opacity: 0.9;
 }
 
@@ -1029,9 +1029,11 @@ input,
   z-index: 3;
   transform: scale(1.35);
   filter: contrast(1.4) brightness(1.05) drop-shadow(0 0 30px rgba(255,0,20,0.9));
-  animation: jumpscareScaryZoom 0.95s cubic-bezier(0.16, 1, 0.3, 1);
-  mix-blend-mode: screen;
+  animation: jumpscareScaryZoom 2.5s cubic-bezier(0.16, 1, 0.3, 1);
+  mix-blend-mode: normal;
   opacity: 0.98;
+  object-fit: contain;
+  background: #000;
 }
 
 .jumpscare-glitch {
@@ -1040,7 +1042,7 @@ input,
   z-index: 4;
   background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,0,30,0.12) 3px, transparent 4px);
   opacity: 0;
-  animation: glitchFlicker 0.95s steps(8) forwards;
+  animation: glitchFlicker 2.5s steps(8) forwards;
   pointer-events: none;
 }
 
@@ -1129,7 +1131,7 @@ input,
 }
 
 .jumpscare-shake {
-  animation: bodyShake 0.55s ease-in-out;
+  animation: bodyShake 2.5s ease-in-out;
 }
 
 @keyframes bodyShake {
