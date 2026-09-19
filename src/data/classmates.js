@@ -65,7 +65,7 @@ export const classmates = [
     nickname: "",
     role: "B.S. in Computer Science",
     degree: "B.S. in Computer Science",
-    quote: "I think, therefore I prompt — Descartes (if he had ChatGPT)",
+    quote: "I think, therefore I prompt - Diskarte",
     memory: "",
     ambition: "",
     image: "/classmates/fajardo.jpg",
