@@ -25,7 +25,6 @@ export class Jumpscare {
       <div class="jumpscare-glitch"></div>
       <div class="jumpscare-vignette"></div>
       <div class="jumpscare-blood-border"></div>
-      <div class="jumpscare-text">GET SCARED! 😱</div>
     `;
     document.body.appendChild(this.element);
     this.baseImg = this.element.querySelector('.jumpscare-base');

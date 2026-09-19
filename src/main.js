@@ -24,9 +24,9 @@ class App {
   }
 
   init() {
-    // 1. Initialize 3D Scene
+    // 1. Initialize 3D Scene - only direct frame clicks trigger jumpscare
     this.scene = new MuseumScene(this.canvasContainer, (classmate, pos, normal) => {
-      this.handleSelectClassmate(classmate, pos, normal);
+      this.handleSelectClassmate(classmate, pos, normal, true);
     });
 
     // 2. Initialize Camera Controls
@@ -104,16 +104,15 @@ class App {
     }));
   }
 
-  handleSelectClassmate(classmate, pos, normal) {
+  handleSelectClassmate(classmate, pos, normal, isDirectFrameClick = false) {
     const idx = classmates.findIndex(c => c.id === classmate.id);
     if (idx !== -1) {
       this.currentClassmateIndex = idx;
     }
 
-    // Jumpscare for cs-4 every time his frame is clicked, synced with zoom start
+    // Jumpscare only on direct frame click, not on Virtual Tour / Directory
     const isJumpscareTarget = classmate.id === 'cs-4';
-    if (isJumpscareTarget && this.jumpscare) {
-      // Trigger immediately as zoom begins (before focusOnFrame animation)
+    if (isDirectFrameClick && isJumpscareTarget && this.jumpscare) {
       this.jumpscare.trigger();
     }
 
@@ -129,7 +128,8 @@ class App {
 
     if (frameObj) {
       const u = frameObj.userData;
-      this.handleSelectClassmate(u.classmate, u.position, u.normal);
+      // false = not a direct frame click, so no jumpscare (prevents Virtual Tour trigger)
+      this.handleSelectClassmate(u.classmate, u.position, u.normal, false);
     }
   }
 
